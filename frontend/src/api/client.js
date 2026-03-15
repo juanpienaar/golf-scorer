@@ -1,4 +1,4 @@
-const API_BASE = 'https://golf-scorer-production.up.railway.app';
+const API_BASE = '';
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`;
