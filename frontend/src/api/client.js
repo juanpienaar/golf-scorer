@@ -14,14 +14,14 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-  getPlayers: () => request('/api/players'),
+  getPlayers: () => request('/api/players/'),
   createPlayer: (data) => request('/api/players/', { method: 'POST', body: JSON.stringify(data) }),
   loginPlayer: (data) => request('/api/players/login', { method: 'POST', body: JSON.stringify(data) }),
   updatePlayer: (id, data) => request(`/api/players/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
   deletePlayer: (id) => request(`/api/players/${id}`, { method: 'DELETE' }),
-  getCourses: () => request('/api/courses'),
+  getCourses: () => request('/api/courses/'),
   getCourse: (id) => request(`/api/courses/${id}`),
-  getGames: (status) => request(`/api/games${status ? `?status=${status}` : ''}`),
+  getGames: (status) => request(`/api/games/${status ? `?status=${status}` : ''}`),
   getGame: (id) => request(`/api/games/${id}`),
   createGame: (data) => request('/api/games/', { method: 'POST', body: JSON.stringify(data) }),
   joinGame: (code) => request(`/api/games/join/${code}`),
@@ -33,7 +33,7 @@ export const api = {
   getScores: (gameId) => request(`/api/games/${gameId}/scores`),
   getLeaderboard: (gameId) => request(`/api/games/${gameId}/leaderboard`),
   getLeaderboardByCode: (code) => request(`/api/games/code/${code}/leaderboard`),
-  getLeagues: () => request('/api/leagues'),
+  getLeagues: () => request('/api/leagues/'),
   getLeague: (id) => request(`/api/leagues/${id}`),
   createLeague: (data) => request('/api/leagues/', { method: 'POST', body: JSON.stringify(data) }),
   getLeagueMembers: (id) => request(`/api/leagues/${id}/members`),
