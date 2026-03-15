@@ -30,16 +30,17 @@ export default function CreateGame({ currentPlayer }) {
   const [format, setFormat] = useState('stableford')
   const [useHandicap, setUseHandicap] = useState(true)
   const [handicapPct, setHandicapPct] = useState(100)
-  const [numHoles, setNumHoles] = useState(18)
+  const [holeOption, setHoleOption] = useState('18')
   const [leagueId, setLeagueId] = useState('')
   const [selectedPlayers, setSelectedPlayers] = useState([])
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState([])
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.getCourses().then(setCourses).catch(() => {})
-    api.getPlayers().then(setPlayers).catch(() => {})
-    api.getLeagues().then(setLeagues).catch(() => {})
+    api.getCourses().then(setCourses).catch(e => setErrors(prev => [...prev, 'Failed to load courses: ' + e.message]))
+    api.getPlayers().then(setPlayers).catch(e => setErrors(prev => [...prev, 'Failed to load players: ' + e.message]))
+    api.getLeagues().then(setLeagues).catch(e => setErrors(prev => [...prev, 'Failed to load leagues: ' + e.message]))
   }, [])
 
   const isTeamFormat = TEAM_FORMATS.includes(format)
@@ -67,12 +68,14 @@ export default function CreateGame({ currentPlayer }) {
     if (selectedPlayers.length === 0) { alert('Add at least one player'); return }
     setLoading(true)
     try {
+      const numHoles = holeOption === '18' ? 18 : 9
       const game = await api.createGame({
         course_id: courseId,
         format,
         use_handicap: useHandicap,
         handicap_percentage: handicapPct,
         num_holes: numHoles,
+        hole_option: holeOption,
         league_id: leagueId || null,
         created_by: currentPlayer?.id || null,
         players: selectedPlayers.map(p => ({
@@ -89,6 +92,14 @@ export default function CreateGame({ currentPlayer }) {
   return (
     <div>
       <h1>Create New Game</h1>
+
+      {errors.length > 0 && (
+        <div className="card" style={{ background: '#ffebee', border: '1px solid var(--red)' }}>
+          <h3 style={{ color: 'var(--red)' }}>Connection Errors</h3>
+          {errors.map((e, i) => <p key={i} className="text-sm" style={{ color: 'var(--red)' }}>{e}</p>)}
+        </div>
+      )}
+
       <form onSubmit={handleCreate}>
         <div className="card">
           <h2>Course</h2>
@@ -111,9 +122,10 @@ export default function CreateGame({ currentPlayer }) {
           <div className="form-row mt-md">
             <div>
               <label>Holes</label>
-              <select value={numHoles} onChange={e => setNumHoles(parseInt(e.target.value))}>
-                <option value={18}>18 Holes</option>
-                <option value={9}>9 Holes</option>
+              <select value={holeOption} onChange={e => setHoleOption(e.target.value)}>
+                <option value="18">18 Holes</option>
+                <option value="front9">9 Holes - Front 9</option>
+                <option value="back9">9 Holes - Back 9</option>
               </select>
             </div>
             <div>

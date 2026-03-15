@@ -11,4 +11,4 @@ FROM node:20-alpine
 RUN npm install -g serve
 COPY --from=build /app/dist /app
 WORKDIR /app
-CMD serve -s . -l ${PORT:-3000}
+CMD serve -s . -l ${PORT:-8080}
